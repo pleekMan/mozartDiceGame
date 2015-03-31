@@ -6,6 +6,8 @@
 //
 //
 
+#pragma once
+
 //#ifndef SoundManager
 //#define SoundManager
 
@@ -13,30 +15,45 @@
 
 #include "ofMain.h"
 //#include "Chain.h"
+#include "Envelope.h"
+#include "AudioClip.h"
 
 #define COMPAS_COUNT 2
 
 class SoundManager{
 
 public:
+
+	//SoundManager();
+	//~SoundManager();
+
 	void setup();
 	void update();
 	void render();
 	
 	void loadCompases();
-	ofSoundPlayer compases [COMPAS_COUNT];
+	AudioClip compases [COMPAS_COUNT];
+	Envelope envelope;
+	float crossFade;
 
 	void playCompas(int compasNumber);
-	void addToVals(ofSoundPlayer selectedCompas);
+	void addToVals(AudioClip* selectedCompas);
 	void playVals();
+	void clearVals();
 
-	vector<ofSoundPlayer> compasesVals;
+	void drawEnvelopes();
+
+	vector<AudioClip*> compasesVals;
 	int currentValsCompas;
 	int nextValsCompas;
 	bool isPlayingVals;
+	bool loop;
+
+	void mouseDragged(int button);
 
 private:
 
+	void updateEnvelope(float attack);
 	
 
 

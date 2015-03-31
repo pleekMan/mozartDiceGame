@@ -91,6 +91,12 @@
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.cpp">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\AudioClip.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Envelope.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\SoundManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -259,6 +265,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.h">
       <Filter>addons\ofxAnimatable\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AudioClip.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Envelope.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\SoundManager.h">
       <Filter>src</Filter>
