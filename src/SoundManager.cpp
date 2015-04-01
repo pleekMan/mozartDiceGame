@@ -24,15 +24,15 @@ void SoundManager::update(){
 			//cout << " INSIDE VALS" << endl;
 
 			compasesVals[currentValsCompas]->setVolume(envelope.getLevelAt(compasesVals[currentValsCompas]->getPosition()));
-
 			compasesVals[nextValsCompas]->setVolume(envelope.getLevelAt(compasesVals[nextValsCompas]->getPosition()));
 
 			// TRIGGER THE NEXT COMPAS AT CROSSFADE POSITION. UPDATE VARS
-			if ((compasesVals[currentValsCompas]->getPosition() + crossFade) > 1.0){
+			if ((compasesVals[currentValsCompas]->getPosition() + crossFade) >= 0.99){
 
 				currentValsCompas = nextValsCompas;
 				nextValsCompas = currentValsCompas + 1;
-				// IF IN LOOP, AFTER LAST COMPAS, START OVER, ELSE, STOP THE SHIT (LAST COMPAS HAS NO ENVELOPE!!!)
+
+				// IF IN LOOP, AFTER LAST COMPAS, START OVER, ELSE, STOP THE SHIT (OOPS! LAST COMPAS HAS NO ENVELOPE!!!)
 				if (nextValsCompas >= compasesVals.size()){
 					if (loop){
 						nextValsCompas = 0;

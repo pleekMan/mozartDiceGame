@@ -8,17 +8,14 @@
 
 #pragma once
 
-//#ifndef SoundManager
-//#define SoundManager
 
 //#include <iostream>
-
 #include "ofMain.h"
-//#include "Chain.h"
-#include "Envelope.h"
-#include "AudioClip.h"
 
 #define COMPAS_COUNT 2
+
+#include "AudioClip.h"
+#include "Envelope.h"
 
 class SoundManager{
 
@@ -32,7 +29,8 @@ public:
 	void render();
 	
 	void loadCompases();
-	AudioClip compases [COMPAS_COUNT];
+
+	AudioClip compases[2];
 	Envelope envelope;
 	float crossFade;
 
@@ -60,4 +58,3 @@ private:
 
 };
 
-//#endif /* defined(__CarbonChains__ChainManager__) */

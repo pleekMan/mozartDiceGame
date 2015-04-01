@@ -100,6 +100,15 @@
     <ClCompile Include="src\SoundManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CompasSelector\CompasSelector.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CompasSelector\CompasButton.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -273,6 +282,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\SoundManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CompasSelector\CompasSelector.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CompasSelector\CompasButton.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
