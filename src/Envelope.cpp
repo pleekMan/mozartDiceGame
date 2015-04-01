@@ -5,43 +5,54 @@
 Envelope::Envelope()
 {
 
-	attack = 0.1;
-	decay = 1.0 - attack;
+	fadeIn = 0.2;
+	fadeOut = 1.0 - fadeIn;
+	maxLevel = 0.8;
 }
 
 float Envelope::getLevelAt(float clipPosition){
 
-	//time = clipPosition;
 
-	float level;
-
-	if (clipPosition < attack)
+	float level = 0.0;;
+	
+	if (clipPosition < fadeIn)
 	{
-		level = ofMap(clipPosition, 0, Envelope::attack, 0.0, 1.0);
+		float reMapPosition = ofMap(clipPosition, 0, fadeIn, 0.0, HALF_PI);
+		level = sin(reMapPosition) * maxLevel;
+		
+	}
+	else if(clipPosition > fadeOut){
+		
+		float reMapPosition = ofMap(clipPosition, fadeOut, 1.0, HALF_PI, PI);
+		level = sin(reMapPosition) * maxLevel;
 	}
 	else {
-		level = ofMap(clipPosition, Envelope::decay, 1.0, 1.0, 0.0);
+		level = maxLevel;
 	}
 
-	return ofClamp(level,0.0,1.0);
+	return level;
 }
 
-void Envelope::drawEnvelope(){
+float Envelope::quadInOut(float currentTime, float startValue, float increment, float duration){
 
-	ofPoint graphOrigin = ofPoint(300, 300);
-	ofPoint graphSize = ofPoint(200, 100);
-
-	ofNoFill();
-	ofSetColor(127);
-	ofRect(graphOrigin, graphSize.x, graphSize.y);
-
-	ofSetColor(255, 0, 0);
-	ofLine(graphOrigin.x, graphOrigin.y + graphSize.y, graphOrigin.x + (graphSize.x * attack), graphOrigin.y);
-	ofLine(graphOrigin.x + (graphSize.x * attack), graphOrigin.y, graphOrigin.x + (graphSize.x * decay), graphOrigin.y);
-	ofLine(graphOrigin.x + (graphSize.x * decay), graphOrigin.y, graphOrigin.x + graphSize.x, graphOrigin.y + graphSize.y);
-
-	//ofColor(0, 255, 0);
-	//ofLine(graphOrigin.x + (graphSize.x * time), graphOrigin.y, graphOrigin.x + (graphSize.x * time), graphOrigin.y - graphSize.y);
-
+	currentTime /= duration / 2;
+	if (currentTime < 1) return increment / 2 * currentTime*currentTime + startValue;
+	currentTime--;
+	return -increment / 2 * (currentTime*(currentTime - 2) - 1) + startValue;
 
 }
+
+float Envelope::quadIn(float currentTime, float startValue, float increment, float duration){
+
+	currentTime /= duration;
+	return increment*currentTime*currentTime + startValue;
+
+}
+
+float Envelope::quadOut(float currentTime, float startValue, float increment, float duration){
+
+	currentTime /= 1.0;
+	return -increment * currentTime*(currentTime - 2) + 0.0;
+
+}
+

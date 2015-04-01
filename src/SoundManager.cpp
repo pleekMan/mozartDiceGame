@@ -101,44 +101,69 @@ void SoundManager::drawEnvelopes(){
 	ofPoint origin = ofPoint(10, ofGetWindowHeight() * 0.5);
 
 	// GRAPH 1
-	ofNoFill();
-	ofSetColor(50);
+	ofFill();
+	ofSetColor(255,20);
 	ofRect(origin, graphSize.x, graphSize.y);
 
-	ofSetColor(0, 255, 0);
-	ofLine(origin.x, origin.y + graphSize.y, origin.x + (graphSize.x * envelope.attack), origin.y);
-	ofLine(origin.x + (graphSize.x * envelope.attack), origin.y, origin.x + (graphSize.x * envelope.decay), origin.y);
-	ofLine(origin.x + (graphSize.x * envelope.decay), origin.y, origin.x + graphSize.x, origin.y + graphSize.y);
+	ofSetColor(200, 200, 0,255);
+
+	float x, y, xPrev, yPrev;
+	xPrev = x = origin.x;
+	yPrev = y = origin.y + graphSize.y;
+
+	for (float i = 0.0; i <= 1.0; i += 0.01)
+	{
+		x = origin.x + (graphSize.x * i);
+		y = (origin.y + graphSize.y) - (graphSize.y * envelope.getLevelAt(i));
+
+		ofLine(ofPoint(xPrev, yPrev), ofPoint(x, y));
+		//ofEllipse(ofPoint(origin.x + (graphSize.x * i), (origin.y + graphSize.y) - (graphSize.y * envelope.getLevelAt(i))), 3, 3);
+
+		xPrev = x;
+		yPrev = y;
+	}
 
 	//GRAPH 2
 
 	ofPushMatrix();
 	ofTranslate(graphSize.x - (graphSize.x * crossFade), 0.0);
 
-	ofNoFill();
-	ofSetColor(50);
+	ofFill();
+	ofSetColor(255, 20);
 	ofRect(origin, graphSize.x, graphSize.y);
 
-	ofSetColor(255, 0, 0);
-	ofLine(origin.x, origin.y + graphSize.y, origin.x + (graphSize.x * envelope.attack), origin.y);
-	ofLine(origin.x + (graphSize.x * envelope.attack), origin.y, origin.x + (graphSize.x * envelope.decay), origin.y);
-	ofLine(origin.x + (graphSize.x * envelope.decay), origin.y, origin.x + graphSize.x, origin.y + graphSize.y);
+	ofSetColor(200, 200, 0, 255);
 
-	ofSetColor(255);
-	ofDrawBitmapString("CF: " + ofToString(100.0 * crossFade) + "%", ofPoint(origin.x, origin.y - 20));
+	xPrev = x = origin.x;
+	yPrev = y = origin.y + graphSize.y;
+	for (float i = 0.0; i <= 1.0; i += 0.01)
+	{
+		x = origin.x + (graphSize.x * i);
+		y = (origin.y + graphSize.y) - (graphSize.y * envelope.getLevelAt(i));
+
+		ofLine(ofPoint(xPrev, yPrev), ofPoint(x, y));
+		//ofEllipse(ofPoint(origin.x + (graphSize.x * i), (origin.y + graphSize.y) - (graphSize.y * envelope.getLevelAt(i))), 3, 3);
+
+		xPrev = x;
+		yPrev = y;
+	}
 
 	ofPopMatrix();
 }
-
+	
 void SoundManager::updateEnvelope(float attack){
-	envelope.attack = attack;
-	envelope.decay = 1.0 - envelope.attack;
+	envelope.fadeIn = attack;
+	envelope.fadeOut = 1.0 - envelope.fadeIn;
 }
 
 void SoundManager::mouseDragged(int button){
 
-	crossFade = ofMap(ofGetMouseX(), 0.0, ofGetWindowWidth(), 0.0, 1.0);
-	updateEnvelope(ofMap(ofGetMouseY(), 0.0, ofGetWindowHeight(), 0.0, 1.0));
+	envelope.maxLevel = 1- (float(ofGetMouseY()) / float(ofGetWindowHeight()));
 
+}
+
+void SoundManager::mouseMoved(){
+	crossFade = ofMap(ofGetMouseX(), 0.0, ofGetWindowWidth(), 0.0, 1.0);
+	updateEnvelope(ofMap(ofGetMouseY(), 0.0, ofGetWindowHeight(), 0.0, 0.5));
 }
 

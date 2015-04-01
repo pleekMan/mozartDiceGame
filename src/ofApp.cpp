@@ -53,13 +53,13 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+	soundManager.mouseMoved();
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
 	soundManager.mouseDragged(button);
+	
 }
 
 //--------------------------------------------------------------

@@ -50,6 +50,7 @@ public:
 	bool loop;
 
 	void mouseDragged(int button);
+	void mouseMoved();
 
 private:
 
