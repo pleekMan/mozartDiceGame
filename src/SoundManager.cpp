@@ -2,14 +2,24 @@
 
 void SoundManager::setup(){
 
-	currentValsCompas = 0;
-	nextValsCompas = currentValsCompas + 1;
-	isPlayingVals = false;
+	
 	loop = true;
 
 	crossFade = 0.2;
 
 	loadCompases();
+
+	reset();
+}
+
+void SoundManager::reset(){
+	currentValsCompas = 0;
+	nextValsCompas = currentValsCompas + 1;
+	isPlayingVals = false;
+
+	for (int i = 0; i < 16; i++){
+		userSelection[i] = -1;
+	}
 }
 
 void SoundManager::update(){
@@ -154,6 +164,14 @@ void SoundManager::drawEnvelopes(){
 void SoundManager::updateEnvelope(float attack){
 	envelope.fadeIn = attack;
 	envelope.fadeOut = 1.0 - envelope.fadeIn;
+}
+
+void SoundManager::setCompasSelection(int column, int row){
+	
+	userSelection[column] = row;
+
+	cout << "Selected Compas: " << ofToString(column) << " -  " << ofToString(row) << endl;
+
 }
 
 void SoundManager::mouseDragged(int button){

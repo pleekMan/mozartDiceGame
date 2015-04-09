@@ -90,8 +90,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AudioClip.cpp" />
-    <ClCompile Include="src\CompasSelector\CompasButton.cpp" />
-    <ClCompile Include="src\CompasSelector\CompasSelector.cpp" />
     <ClCompile Include="src\Envelope.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
@@ -126,8 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AudioClip.h" />
-    <ClInclude Include="src\CompasSelector\CompasButton.h" />
-    <ClInclude Include="src\CompasSelector\CompasSelector.h" />
     <ClInclude Include="src\Envelope.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h" />

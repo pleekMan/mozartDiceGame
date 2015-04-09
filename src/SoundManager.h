@@ -25,11 +25,13 @@ public:
 	//~SoundManager();
 
 	void setup();
+	void reset();
 	void update();
 	void render();
 	
 	void loadCompases();
 
+	int userSelection[16];
 	AudioClip compases[2];
 	Envelope envelope;
 	float crossFade;
@@ -38,6 +40,7 @@ public:
 	void addToVals(AudioClip* selectedCompas);
 	void playVals();
 	void clearVals();
+	void setCompasSelection(int column, int row);
 
 	void drawEnvelopes();
 
