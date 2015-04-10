@@ -3,6 +3,8 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "SoundManager.h"
+#include "ofxAnimatable.h"
+#include "ofxAnimatableFloat.h"
 
 #define HOST "localhost"
 #define SERVER_PORT 10000
@@ -30,6 +32,16 @@ public:
 	ofxOscReceiver netReciever;
 	ofxOscSender netSender;
 
+	int sceneState;
+	int prevSceneState;
+	ofFbo stateLayers[4];
+
+	ofxAnimatableFloat layerTransition;
+	ofVideoPlayer videos[4];
+	//ofImage images[4];
+
+	void setState(int state);
+	void mousePressed(int x, int y, int button);
 	void mouseDragged(int button);
 	void mouseMoved();
 	void keyPressed(int key);
