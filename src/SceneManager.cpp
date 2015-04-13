@@ -32,6 +32,8 @@ void SceneManager::setup(){
 	videos[SELECTION].setPaused(true);
 	videos[VIDEO_EXPLAIN].setPaused(true);
 	videos[EXECUTION].setPaused(true);
+
+	componiendo.loadImage("images/componiendo.png");
 	
 
 	netSender.setup(HOST, CLIENT_PORT);
@@ -73,6 +75,9 @@ void SceneManager::update(){
 		ofBackground(0);
 		videos[VIDEO_EXPLAIN].update();
 		videos[VIDEO_EXPLAIN].draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
+
+		componiendo.draw(0, 0);
+
 		stateLayers[VIDEO_EXPLAIN].end();
 
 	}
@@ -80,13 +85,19 @@ void SceneManager::update(){
 	if (sceneState == EXECUTION || (prevSceneState == EXECUTION && layerTransition.isAnimating())){
 		stateLayers[EXECUTION].begin();
 		ofBackground(0);
+
 		videos[EXECUTION].update();
 		videos[EXECUTION].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
+
+		soundManager.update();
+		//soundManager.render();
+
+
 		stateLayers[EXECUTION].end();
 	}
 	
 
-	soundManager.update();
+	
 
 	
 }
@@ -110,7 +121,7 @@ void SceneManager::render(){
 	ofDrawBitmapString("Compas: " + ofToString(soundManager.currentValsCompas) + " of " + ofToString(soundManager.compasesVals.size() - 1), ofPoint(20, 20));
 	ofDrawBitmapString("Isplaying Vals: " + ofToString(soundManager.isPlayingVals), ofPoint(20, 40));
 
-	soundManager.render();
+
 }
 
 void SceneManager::checkNetMessages(){
@@ -128,7 +139,7 @@ void SceneManager::checkNetMessages(){
 		if (m.getAddress() == "/start"){
 			setState(SELECTION);
 		}
-
+	
 		// RECIEVE -> COMPAS SELECTION
 		if (m.getAddress() == "/compasSelection"){
 			int selection = m.getArgAsInt32(0);
@@ -196,6 +207,9 @@ void SceneManager::setState(int state){
 	else if (sceneState == EXECUTION)
 	{
 		videos[EXECUTION].play();
+		
+		soundManager.playVals();
+			
 		//videos[VIDEO_EXPLAIN].setFrame(0);
 		//videos[VIDEO_EXPLAIN].setPaused(true);
 	}

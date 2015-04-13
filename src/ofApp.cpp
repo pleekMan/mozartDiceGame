@@ -5,6 +5,7 @@ void ofApp::setup(){
 	
 	ofSetBackgroundAuto(true);
 	ofBackground(0);
+	ofSetFrameRate(30);
 
 	sceneManager.setup();
 }

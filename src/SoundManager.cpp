@@ -3,13 +3,18 @@
 void SoundManager::setup(){
 
 	
-	loop = true;
+	loop = false;
 
-	crossFade = 0.2;
+	crossFade = 0.02;
 
 	loadCompases();
 
 	reset();
+
+	for (int i = 0; i < 16; i++)
+	{
+		addToVals(&compases[0]);
+	}
 }
 
 void SoundManager::reset(){
@@ -66,6 +71,8 @@ void SoundManager::render(){
 	drawEnvelopes();
 
 	ofDrawBitmapString("Current: " + ofToString(currentValsCompas) + " / Next: " + ofToString(nextValsCompas), ofPoint(20, 50));
+
+	ofDrawBitmapString("CF: " + ofToString(crossFade) + " | Sine Fade: " + ofToString(envelope.fadeIn), ofPoint(20, 100));
 
 }
 
@@ -181,7 +188,7 @@ void SoundManager::mouseDragged(int button){
 }
 
 void SoundManager::mouseMoved(){
-	crossFade = ofMap(ofGetMouseX(), 0.0, ofGetWindowWidth(), 0.0, 1.0);
-	updateEnvelope(ofMap(ofGetMouseY(), 0.0, ofGetWindowHeight(), 0.0, 0.5));
+	//crossFade = ofMap(ofGetMouseX(), 0.0, ofGetWindowWidth(), 0.0, 1.0);
+	//updateEnvelope(ofMap(ofGetMouseY(), 0.0, ofGetWindowHeight(), 0.0, 0.5));
 }
 

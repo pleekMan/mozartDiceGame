@@ -38,6 +38,7 @@ public:
 
 	ofxAnimatableFloat layerTransition;
 	ofVideoPlayer videos[4];
+	ofImage componiendo;
 	//ofImage images[4];
 
 	void setState(int state);
