@@ -130,10 +130,20 @@ void SceneManager::checkNetMessages(){
 		ofxOscMessage m;
 		netReciever.getNextMessage(&m);
 
-		// SEND -> GO TO STATE	
+		cout << "RECIEVED MESSAGE WITH ADDRESS: " << m.getAddress() << endl;
+
+		// RECIEVE -> GO TO STATE	
 		if (m.getAddress() == "/goToState"){
 			cout << "GO TO STATE: " << ofToString(m.getArgAsInt32(0)) << endl;
+			int nextState = m.getArgAsInt32(0);
+			setState(nextState);
+			
+			ofxOscMessage reSendState;
+			reSendState.setAddress("/goToState");
+			reSendState.addIntArg(nextState);
+			netSender.sendMessage(reSendState);
 		}
+
 
 		// RECIEVE -> START GAME
 		if (m.getAddress() == "/start"){
@@ -186,6 +196,8 @@ void SceneManager::setState(int state){
 		videos[SCREENSAVER].play();
 		//videos[EXECUTION].setFrame(0);
 		//videos[EXECUTION].setPaused(true);
+
+		soundManager.isPlayingVals = false;
 		
 	}
 

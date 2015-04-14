@@ -6,9 +6,16 @@
 #include "ofxAnimatable.h"
 #include "ofxAnimatableFloat.h"
 
+//#define LOCALHOST_NETWORK_CONFIG
+
+#ifdef LOCALHOST_NETWORK_CONFIG
 #define HOST "localhost"
-#define SERVER_PORT 10000
-#define CLIENT_PORT 10001
+#else
+#define HOST "192.168.1.10" 
+#endif
+
+#define SERVER_PORT 12000
+#define CLIENT_PORT 12001
 
 enum SceneState{
 	SCREENSAVER,
