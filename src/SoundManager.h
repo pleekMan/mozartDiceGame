@@ -13,6 +13,7 @@
 #include "ofMain.h"
 
 #define COMPAS_COUNT 2
+#define SELECTION_COMPASES 16
 
 #include "AudioClip.h"
 #include "Envelope.h"
@@ -31,7 +32,7 @@ public:
 	
 	void loadCompases();
 
-	int userSelection[16];
+	int userSelection[SELECTION_COMPASES];
 	AudioClip compases[2];
 	Envelope envelope;
 	float crossFade;
@@ -40,7 +41,7 @@ public:
 	void addToVals(AudioClip* selectedCompas);
 	void playVals();
 	void clearVals();
-	void setCompasSelection(int column, int row);
+	void setCompasSelection(int column, int compas);
 
 	void drawEnvelopes();
 

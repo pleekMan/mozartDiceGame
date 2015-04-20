@@ -11,7 +11,7 @@ void SoundManager::setup(){
 
 	reset();
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < SELECTION_COMPASES; i++)
 	{
 		addToVals(&compases[0]);
 	}
@@ -22,7 +22,7 @@ void SoundManager::reset(){
 	nextValsCompas = currentValsCompas + 1;
 	isPlayingVals = false;
 
-	for (int i = 0; i < 16; i++){
+	for (int i = 0; i < SELECTION_COMPASES; i++){
 		userSelection[i] = -1;
 	}
 }
@@ -173,11 +173,11 @@ void SoundManager::updateEnvelope(float attack){
 	envelope.fadeOut = 1.0 - envelope.fadeIn;
 }
 
-void SoundManager::setCompasSelection(int column, int row){
+void SoundManager::setCompasSelection(int column, int compas){
 	
-	userSelection[column] = row;
+	userSelection[column] = compas;
 
-	cout << "Selected Compas: " << ofToString(column) << " -  " << ofToString(row) << endl;
+	cout << "Selected Compas: " << ofToString(column) << " -  " << ofToString(compas) << endl;
 
 }
 

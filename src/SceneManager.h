@@ -6,7 +6,7 @@
 #include "ofxAnimatable.h"
 #include "ofxAnimatableFloat.h"
 
-//#define LOCALHOST_NETWORK_CONFIG
+#define LOCALHOST_NETWORK_CONFIG
 
 #ifdef LOCALHOST_NETWORK_CONFIG
 #define HOST "localhost"
@@ -38,6 +38,8 @@ public:
 
 	ofxOscReceiver netReciever;
 	ofxOscSender netSender;
+
+	bool clientsFinishedSelecting[2];
 
 	int sceneState;
 	int prevSceneState;

@@ -29,7 +29,7 @@ void ofApp::draw(){
 
 	sceneManager.render();
 
-	ofDrawBitmapString(ofToString(ofGetMouseX()) + " | " + ofToString(ofGetMouseY()), ofGetMouseX() + 10, ofGetMouseY() - 10);
+	//ofDrawBitmapString(ofToString(ofGetMouseX()) + " | " + ofToString(ofGetMouseY()), ofGetMouseX() + 10, ofGetMouseY() - 10);
 
 }
 

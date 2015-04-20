@@ -2,6 +2,8 @@
 
 void SceneManager::setup(){
 
+
+
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
 	{
@@ -42,6 +44,8 @@ void SceneManager::setup(){
 	soundManager.setup();
 
 	setState(SCREENSAVER);
+	clientsFinishedSelecting[0] = false;
+	clientsFinishedSelecting[1] = true;
 
 }
 void SceneManager::update(){
@@ -51,7 +55,7 @@ void SceneManager::update(){
 	layerTransition.update(1.0 / ofGetFrameRate());
 
 
-	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL RANSITION IS FINISHED) (NOT STOPPING VIDEO)
+	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL TRANSITION IS FINISHED) (NOT STOPPING VIDEO)
 	ofSetColor(255);
 
 	if (sceneState == SCREENSAVER || (prevSceneState == SCREENSAVER && layerTransition.isAnimating())){
@@ -69,6 +73,11 @@ void SceneManager::update(){
 		videos[SELECTION].draw(0, 0, stateLayers[SELECTION].getWidth(), stateLayers[SELECTION].getHeight());
 		stateLayers[SELECTION].end();
 
+		if (clientsFinishedSelecting[0] && clientsFinishedSelecting[1])
+		{
+			setState(VIDEO_EXPLAIN);
+		}
+
 	}
 	if (sceneState == VIDEO_EXPLAIN || (prevSceneState == VIDEO_EXPLAIN && layerTransition.isAnimating())){
 		stateLayers[VIDEO_EXPLAIN].begin();
@@ -76,7 +85,7 @@ void SceneManager::update(){
 		videos[VIDEO_EXPLAIN].update();
 		videos[VIDEO_EXPLAIN].draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
 
-		componiendo.draw(0, 0);
+		componiendo.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 
 		stateLayers[VIDEO_EXPLAIN].end();
 
@@ -90,7 +99,7 @@ void SceneManager::update(){
 		videos[EXECUTION].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
 
 		soundManager.update();
-		//soundManager.render();
+		soundManager.render();
 
 
 		stateLayers[EXECUTION].end();
@@ -118,8 +127,8 @@ void SceneManager::render(){
 	stateLayers[sceneState].draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 
 	ofSetColor(255);
-	ofDrawBitmapString("Compas: " + ofToString(soundManager.currentValsCompas) + " of " + ofToString(soundManager.compasesVals.size() - 1), ofPoint(20, 20));
-	ofDrawBitmapString("Isplaying Vals: " + ofToString(soundManager.isPlayingVals), ofPoint(20, 40));
+	//ofDrawBitmapString("Compas: " + ofToString(soundManager.currentValsCompas) + " of " + ofToString(soundManager.compasesVals.size() - 1), ofPoint(20, 20));
+	//ofDrawBitmapString("Isplaying Vals: " + ofToString(soundManager.isPlayingVals), ofPoint(20, 40));
 
 
 }
@@ -131,6 +140,16 @@ void SceneManager::checkNetMessages(){
 		netReciever.getNextMessage(&m);
 
 		cout << "RECIEVED MESSAGE WITH ADDRESS: " << m.getAddress() << endl;
+
+		// RECIEVE AND BROADCAST -> START GAME
+		if (m.getAddress() == "/start"){
+			setState(SELECTION);
+
+			ofxOscMessage reSendState;
+			reSendState.setAddress("/goToState");
+			reSendState.addIntArg(SELECTION);
+			netSender.sendMessage(reSendState);
+		}
 
 		// RECIEVE -> GO TO STATE	
 		if (m.getAddress() == "/goToState"){
@@ -144,18 +163,38 @@ void SceneManager::checkNetMessages(){
 			netSender.sendMessage(reSendState);
 		}
 
-
-		// RECIEVE -> START GAME
-		if (m.getAddress() == "/start"){
-			setState(SELECTION);
-		}
 	
-		// RECIEVE -> COMPAS SELECTION
+		// RECIEVE -> COMPAS SELECTION -> SAVE COMPAS SELECTION TO SoundManager
 		if (m.getAddress() == "/compasSelection"){
-			int selection = m.getArgAsInt32(0);
+			
+			int fromClient = m.getArgAsInt32(0);
+			int serverGridColumnCount = SELECTION_COMPASES;
 
+			// ADAPT GRIDS FROM CLIENTS (HALF A GRID) TO THE SERVERS COMPLETE GRID OF COMPASES
+			for (int i = 0; i < 8; i++)
+			{
+				int clientGridSelection = m.getArgAsInt32(i + 1); // FIRST ARGUMENT IN MESSAGE IS clientID
+				int clientRow = int(clientGridSelection / (SELECTION_COMPASES / 2));
+
+				if (fromClient == 0)
+				{
+					int serverGridSelection = clientGridSelection + (clientRow * (serverGridColumnCount / 2)); // userSelection + (userRow * (serverColumnWidth / 2))
+					soundManager.setCompasSelection(i, serverGridSelection);
+					clientsFinishedSelecting[0] = true;
+				}
+				else {
+					int serverGridSelection = clientGridSelection + ((serverGridColumnCount / 2) * (clientRow + 1)); // userSelection + ( (userRow + 1) * (serverColumnWidth / 2))
+					soundManager.setCompasSelection(i+8, serverGridSelection);
+					clientsFinishedSelecting[1] = true;
+				}
+
+				//cout << "Column: " << ofToString(i) << " / Compas: " << ofToString(soundManager.userSelection[i]) << endl;
+			}
+			
+			
+			/*
 			// 1D to 2D
-			int totalColumns = 16;
+			int totalColumns = SELECTION_COMPASES;
 			int column = selection % totalColumns;
 			int row = int(selection / totalColumns);
 
@@ -175,6 +214,7 @@ void SceneManager::checkNetMessages(){
 				setState(VIDEO_EXPLAIN);
 			}
 			netSender.sendMessage(gridMessage);
+			*/
 
 		}
 	}
@@ -204,6 +244,10 @@ void SceneManager::setState(int state){
 	else if (sceneState == SELECTION)
 	{
 		videos[SELECTION].play();
+
+		clientsFinishedSelecting[0] = false;
+		clientsFinishedSelecting[1] = true;
+
 		//videos[SCREENSAVER].setFrame(0);
 		//videos[SCREENSAVER].setPaused(true);
 		
@@ -233,6 +277,7 @@ void SceneManager::setState(int state){
 	
 
 }
+
 
 void SceneManager::mousePressed(int x, int y, int button){
 	
