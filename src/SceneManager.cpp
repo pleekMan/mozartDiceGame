@@ -16,19 +16,24 @@ void SceneManager::setup(){
 	layerTransition.setDuration(1.0);
 	layerTransition.setPercentDone(0.0);
 	layerTransition.reset(0.0);
-	layerTransition.setCurve(AnimCurve::EASE_IN_EASE_OUT);
+	layerTransition.setCurve(EASE_IN_EASE_OUT);
 
 
 	// SET VIDEOS
 	videos[0].loadMovie("video/1 - SCREENSAVER.mp4");
-	videos[1].loadMovie("video/2 - SELECCION.mov");
-	videos[2].loadMovie("video/3 - ANIMACION.mov");
-	videos[3].loadMovie("video/4 - EJECUCION.mov");
+	videos[1].loadMovie("video/2 - SELECCION.mp4");
+	videos[2].loadMovie("video/3 - ANIMACION.mp4");
+	videos[3].loadMovie("video/4 - EJECUCION.mp4");
 
 	videos[SCREENSAVER].setLoopState(OF_LOOP_NORMAL);
 	videos[SELECTION].setLoopState(OF_LOOP_NORMAL);
-	videos[VIDEO_EXPLAIN].setLoopState(OF_LOOP_NORMAL);
+	videos[VIDEO_EXPLAIN].setLoopState(OF_LOOP_NONE);
 	videos[EXECUTION].setLoopState(OF_LOOP_NORMAL);
+
+	videos[SCREENSAVER].play();
+	videos[SELECTION].play();
+	videos[VIDEO_EXPLAIN].play();
+	videos[EXECUTION].play();
 
 	videos[SCREENSAVER].setPaused(true);
 	videos[SELECTION].setPaused(true);
@@ -54,7 +59,6 @@ void SceneManager::update(){
 
 	layerTransition.update(1.0 / ofGetFrameRate());
 
-
 	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL TRANSITION IS FINISHED) (NOT STOPPING VIDEO)
 	ofSetColor(255);
 
@@ -76,16 +80,33 @@ void SceneManager::update(){
 		if (clientsFinishedSelecting[0] && clientsFinishedSelecting[1])
 		{
 			setState(VIDEO_EXPLAIN);
+			clientsFinishedSelecting[1] = clientsFinishedSelecting[0] = false;
+
+			ofxOscMessage m;
+			m.setAddress("/goToState");
+			m.addIntArg(VIDEO_EXPLAIN);
+			netSender.sendMessage(m);
 		}
 
 	}
 	if (sceneState == VIDEO_EXPLAIN || (prevSceneState == VIDEO_EXPLAIN && layerTransition.isAnimating())){
 		stateLayers[VIDEO_EXPLAIN].begin();
 		ofBackground(0);
+
 		videos[VIDEO_EXPLAIN].update();
 		videos[VIDEO_EXPLAIN].draw(0, 0, stateLayers[VIDEO_EXPLAIN].getWidth(), stateLayers[VIDEO_EXPLAIN].getHeight());
 
-		componiendo.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+		if (videos[VIDEO_EXPLAIN].getIsMovieDone() && sceneState == VIDEO_EXPLAIN){
+			videos[VIDEO_EXPLAIN].setPaused(true);
+			setState(EXECUTION);
+
+			ofxOscMessage m;
+			m.setAddress("/goToState");
+			m.addIntArg(EXECUTION);
+			netSender.sendMessage(m);
+		}
+
+		//componiendo.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 
 		stateLayers[VIDEO_EXPLAIN].end();
 
@@ -233,7 +254,8 @@ void SceneManager::setState(int state){
 
 	if (sceneState == SCREENSAVER)
 	{
-		videos[SCREENSAVER].play();
+		videos[SCREENSAVER].setFrame(0);
+		videos[SCREENSAVER].setPaused(false);
 		//videos[EXECUTION].setFrame(0);
 		//videos[EXECUTION].setPaused(true);
 
@@ -243,25 +265,27 @@ void SceneManager::setState(int state){
 
 	else if (sceneState == SELECTION)
 	{
-		videos[SELECTION].play();
+		videos[SELECTION].setFrame(0);
+		videos[SELECTION].setPaused(false);
+		//videos[SCREENSAVER].setFrame(0);
+		//videos[SCREENSAVER].setPaused(true);
 
 		clientsFinishedSelecting[0] = false;
 		clientsFinishedSelecting[1] = true;
-
-		//videos[SCREENSAVER].setFrame(0);
-		//videos[SCREENSAVER].setPaused(true);
 		
 	}
 
 	else if (sceneState == VIDEO_EXPLAIN)
 	{
-		videos[VIDEO_EXPLAIN].play();
+		videos[VIDEO_EXPLAIN].setFrame(0);
+		videos[VIDEO_EXPLAIN].setPaused(false);
 		//videos[SELECTION].setFrame(0);
 		//videos[SELECTION].setPaused(true);
 	}
 
 	else if (sceneState == EXECUTION)
 	{
+		videos[EXECUTION].setFrame(0);
 		videos[EXECUTION].play();
 		
 		soundManager.playVals();
@@ -270,10 +294,12 @@ void SceneManager::setState(int state){
 		//videos[VIDEO_EXPLAIN].setPaused(true);
 	}
 
+	/*
 	ofxOscMessage m;
 	m.setAddress("/goToState");
 	m.addIntArg(sceneState);
 	netSender.sendMessage(m);
+	*/
 	
 
 }
@@ -324,16 +350,19 @@ void SceneManager::keyPressed(int key){
 		//soundManager.playVals();
 	}
 
-	if (key == 'c'){
-		//soundManager.clearVals();
+	if (key == 'z' || key == 'Z'){
+		clientsFinishedSelecting[0] = true;
+		clientsFinishedSelecting[1] = true;
 	}
 
-	if (key == 's' || key == 'S'){
 
+	if (key == 's' || key == 'S'){
+		/*
 		ofxOscMessage m;
 		m.setAddress("/goToState");
 		m.addIntArg(1);
 		netSender.sendMessage(m);
+		*/
 	}
 }
 

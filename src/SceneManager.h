@@ -6,12 +6,12 @@
 #include "ofxAnimatable.h"
 #include "ofxAnimatableFloat.h"
 
-#define LOCALHOST_NETWORK_CONFIG
+//#define LOCALHOST_NETWORK_CONFIG
 
 #ifdef LOCALHOST_NETWORK_CONFIG
 #define HOST "localhost"
 #else
-#define HOST "192.168.1.10" 
+#define HOST "192.168.1.20" 
 #endif
 
 #define SERVER_PORT 12000
