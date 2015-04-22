@@ -5,7 +5,9 @@
 #include "SoundManager.h"
 #include "ofxAnimatable.h"
 #include "ofxAnimatableFloat.h"
+#include "ofxXMLSettings.h"
 
+/*
 //#define LOCALHOST_NETWORK_CONFIG
 
 #ifdef LOCALHOST_NETWORK_CONFIG
@@ -16,6 +18,7 @@
 
 #define SERVER_PORT 12000
 #define CLIENT_PORT 12001
+*/
 
 enum SceneState{
 	SCREENSAVER,
@@ -33,6 +36,8 @@ public:
 	void setup();
 	void update();
 	void render();
+
+	ofxXmlSettings settings;
 
 	SoundManager soundManager;
 

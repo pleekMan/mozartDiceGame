@@ -2,6 +2,25 @@
 
 void SceneManager::setup(){
 
+	// LOAD SETTINGS -------------- BEGIN
+
+	if (settings.loadFile("settings.xml"))
+	{
+		string networkBroadCastIP = settings.getValue("SETTINGS:broadCastIP", "192.168.1.255", 0);
+		int serverPort = settings.getValue("SETTINGS:servertPort", 12000, 0);
+		int clientsPort = settings.getValue("SETTINGS:clientPort", 12001, 0);
+
+		netSender.setup(networkBroadCastIP, clientsPort); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
+		netReciever.setup(serverPort);
+	}
+	else {
+
+		netSender.setup("192.168.1.255", 12001); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
+		netReciever.setup(12000);
+
+		cout << "--------- SETTINGS FILE NOT LOADED, DEFAULTING ---------" << endl;
+	}
+	// LOAD SETTINGS -------------- END
 
 
 	// SET LAYERS
@@ -20,10 +39,10 @@ void SceneManager::setup(){
 
 
 	// SET VIDEOS
-	videos[0].loadMovie("video/1 - SCREENSAVER.mp4");
-	videos[1].loadMovie("video/2 - SELECCION.mp4");
-	videos[2].loadMovie("video/3 - ANIMACION.mp4");
-	videos[3].loadMovie("video/4 - EJECUCION.mp4");
+	videos[0].loadMovie("video/1 - SCREENSAVER.mov");
+	videos[1].loadMovie("video/2 - SELECCION.mov");
+	videos[2].loadMovie("video/3 - ANIMACION.mov");
+	videos[3].loadMovie("video/4 - EJECUCION.mov");
 
 	videos[SCREENSAVER].setLoopState(OF_LOOP_NORMAL);
 	videos[SELECTION].setLoopState(OF_LOOP_NORMAL);
@@ -42,9 +61,6 @@ void SceneManager::setup(){
 
 	componiendo.loadImage("images/componiendo.png");
 	
-
-	netSender.setup(HOST, CLIENT_PORT);
-	netReciever.setup(SERVER_PORT);
 
 	soundManager.setup();
 
