@@ -12,7 +12,7 @@
 //#include <iostream>
 #include "ofMain.h"
 
-#define COMPAS_COUNT 2
+#define COMPAS_COUNT 176
 #define SELECTION_COMPASES 16
 
 #include "AudioClip.h"
@@ -33,7 +33,7 @@ public:
 	void loadCompases();
 
 	int userSelection[SELECTION_COMPASES];
-	AudioClip compases[2];
+	AudioClip compases[COMPAS_COUNT];
 	Envelope envelope;
 	float crossFade;
 

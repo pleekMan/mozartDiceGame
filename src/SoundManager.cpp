@@ -5,16 +5,12 @@ void SoundManager::setup(){
 	
 	loop = false;
 
-	crossFade = 0.02;
+	crossFade = 0.58;
 
 	loadCompases();
 
 	reset();
 
-	for (int i = 0; i < SELECTION_COMPASES; i++)
-	{
-		addToVals(&compases[0]);
-	}
 }
 
 void SoundManager::reset(){
@@ -49,6 +45,7 @@ void SoundManager::update(){
 
 				// IF IN LOOP, AFTER LAST COMPAS, START OVER, ELSE, STOP THE SHIT (OOPS! LAST COMPAS HAS NO ENVELOPE!!!)
 				if (nextValsCompas >= compasesVals.size()){
+				//if (nextValsCompas >= 5){ // LESS TIME FOR PRESENTATION
 					if (loop){
 						nextValsCompas = 0;
 					}
@@ -69,19 +66,26 @@ void SoundManager::update(){
 void SoundManager::render(){
 		
 	drawEnvelopes();
-
 	ofDrawBitmapString("Current: " + ofToString(currentValsCompas) + " / Next: " + ofToString(nextValsCompas), ofPoint(20, 50));
-
-	ofDrawBitmapString("CF: " + ofToString(crossFade) + " | Sine Fade: " + ofToString(envelope.fadeIn), ofPoint(20, 100));
 
 }
 
 void SoundManager::loadCompases(){
 
+	cout << "----- LOADING AUDIO FILES --" << endl;
+
 	for (int i = 0; i < COMPAS_COUNT; i++){
-		string soundPath = "audio/" + ofToString(i) + ".mp3";
+		string soundPath = "audio/" + ofToString(i) + ".wav";
 		compases[i].loadSound(soundPath, false);
 		compases[i].setPaused(true);
+
+	}
+
+	// SET UP DEFAULT COMPAS SELECTION (IN CASE NO SELECTION IS TRANSMITTED FROM CLIENTS)
+	for (int i = 0; i < SELECTION_COMPASES; i++)
+	{
+		addToVals(&compases[int(ofRandom(175))]);
+		//addToVals(&compases[i%2]);
 
 	}
 }
@@ -166,6 +170,10 @@ void SoundManager::drawEnvelopes(){
 	}
 
 	ofPopMatrix();
+
+
+	ofDrawBitmapString("CF: " + ofToString(crossFade) + " | Sine Fade: " + ofToString(envelope.fadeIn), ofPoint(20, 100));
+
 }
 	
 void SoundManager::updateEnvelope(float attack){
@@ -177,6 +185,12 @@ void SoundManager::setCompasSelection(int column, int compas){
 	
 	userSelection[column] = compas;
 
+	if (column == 15){
+		for (int i = 0; i < SELECTION_COMPASES; i++)
+		{
+			addToVals(&compases[userSelection[i]]);
+		}
+	}
 	cout << "Selected Compas: " << ofToString(column) << " -  " << ofToString(compas) << endl;
 
 }

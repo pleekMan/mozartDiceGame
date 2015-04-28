@@ -5,7 +5,7 @@
 Envelope::Envelope()
 {
 
-	fadeIn = 0.0182;
+	fadeIn = 0.179;
 	fadeOut = 1.0 - fadeIn;
 	maxLevel = 0.8;
 }

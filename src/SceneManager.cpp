@@ -207,6 +207,14 @@ void SceneManager::checkNetMessages(){
 			int fromClient = m.getArgAsInt32(0);
 			int serverGridColumnCount = SELECTION_COMPASES;
 
+			// UNLOCK 2nd SCREEN
+			if (fromClient == 0){
+				ofxOscMessage unlockScreen;
+				unlockScreen.setAddress("/unlockScreen");
+				netSender.sendMessage(unlockScreen);
+			}
+
+
 			// ADAPT GRIDS FROM CLIENTS (HALF A GRID) TO THE SERVERS COMPLETE GRID OF COMPASES
 			for (int i = 0; i < 8; i++)
 			{
@@ -287,7 +295,7 @@ void SceneManager::setState(int state){
 		//videos[SCREENSAVER].setPaused(true);
 
 		clientsFinishedSelecting[0] = false;
-		clientsFinishedSelecting[1] = true;
+		clientsFinishedSelecting[1] = false;
 		
 	}
 
@@ -304,6 +312,12 @@ void SceneManager::setState(int state){
 		videos[EXECUTION].setFrame(0);
 		videos[EXECUTION].play();
 		
+		for (int i = 0; i < 16; i++)
+		{
+			cout << " - " << ofToString(soundManager.userSelection[i]);
+		}
+		cout << endl;
+
 		soundManager.playVals();
 			
 		//videos[VIDEO_EXPLAIN].setFrame(0);
@@ -373,12 +387,11 @@ void SceneManager::keyPressed(int key){
 
 
 	if (key == 's' || key == 'S'){
-		/*
+		
 		ofxOscMessage m;
-		m.setAddress("/goToState");
-		m.addIntArg(1);
+		m.setAddress("/unlockScreen");
 		netSender.sendMessage(m);
-		*/
+		
 	}
 }
 
