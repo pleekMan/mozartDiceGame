@@ -46,6 +46,9 @@ public:
 
 	bool clientsFinishedSelecting[2];
 
+	//int finalProbability;
+	float diceProbabilities [11]; // PROBABILITIES FOR EACH DICE PAIR/ROW
+
 	int sceneState;
 	int prevSceneState;
 	ofFbo stateLayers[4];
@@ -64,6 +67,7 @@ public:
 private:
 
 	void checkNetMessages();
+	int calculateProbability();
 
 };
 

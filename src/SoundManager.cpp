@@ -5,7 +5,7 @@ void SoundManager::setup(){
 	
 	loop = false;
 
-	crossFade = 0.58;
+	crossFade = 0.67;
 
 	loadCompases();
 
@@ -17,10 +17,6 @@ void SoundManager::reset(){
 	currentValsCompas = 0;
 	nextValsCompas = currentValsCompas + 1;
 	isPlayingVals = false;
-
-	for (int i = 0; i < SELECTION_COMPASES; i++){
-		userSelection[i] = -1;
-	}
 }
 
 void SoundManager::update(){
@@ -74,18 +70,25 @@ void SoundManager::loadCompases(){
 
 	cout << "----- LOADING AUDIO FILES --" << endl;
 
+	ofBuffer audioIndex = ofBufferFromFile("grillaMozart.txt", true);
+
 	for (int i = 0; i < COMPAS_COUNT; i++){
-		string soundPath = "audio/" + ofToString(i) + ".wav";
+
+		string compasLine = audioIndex.getNextLine();
+		string soundPath = "audio/" + compasLine + ".wav";
 		compases[i].loadSound(soundPath, false);
 		compases[i].setPaused(true);
+		cout << ofToString(i) << " > " << compasLine << endl;
 
 	}
+	cout << endl;
+	cout << "----- DONE! --" << endl;
 
 	// SET UP DEFAULT COMPAS SELECTION (IN CASE NO SELECTION IS TRANSMITTED FROM CLIENTS)
 	for (int i = 0; i < SELECTION_COMPASES; i++)
 	{
-		addToVals(&compases[int(ofRandom(175))]);
-		//addToVals(&compases[i%2]);
+		//addToVals(&compases[int(ofRandom(175))]);
+		addToVals(&compases[175]);
 
 	}
 }
@@ -186,9 +189,13 @@ void SoundManager::setCompasSelection(int column, int compas){
 	userSelection[column] = compas;
 
 	if (column == 15){
+	//if (column == 7){ // PARA TESTEAR LA PRIMER PANTALLA NOMAS
+		compasesVals.clear();
 		for (int i = 0; i < SELECTION_COMPASES; i++)
 		{
+			//addToVals(&compases[int(ofRandom(175))]);
 			addToVals(&compases[userSelection[i]]);
+
 		}
 	}
 	cout << "Selected Compas: " << ofToString(column) << " -  " << ofToString(compas) << endl;
@@ -197,7 +204,7 @@ void SoundManager::setCompasSelection(int column, int compas){
 
 void SoundManager::mouseDragged(int button){
 
-	envelope.maxLevel = 1- (float(ofGetMouseY()) / float(ofGetWindowHeight()));
+	envelope.maxLevel = 1 - (float(ofGetMouseY()) / float(ofGetWindowHeight()));
 
 }
 

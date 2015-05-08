@@ -5,9 +5,9 @@
 Envelope::Envelope()
 {
 
-	fadeIn = 0.179;
+	fadeIn = 0.070;
 	fadeOut = 1.0 - fadeIn;
-	maxLevel = 0.8;
+	maxLevel = 0.9;
 }
 
 float Envelope::getLevelAt(float clipPosition){

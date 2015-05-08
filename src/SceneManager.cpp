@@ -15,13 +15,26 @@ void SceneManager::setup(){
 	}
 	else {
 
-		netSender.setup("192.168.1.255", 12001); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
+		netSender.setup("localhost", 12001);
+		//netSender.setup("192.168.1.255", 12001); // (SEARCH TAG, DEFAULT, ARGUMENT NUMBER)
 		netReciever.setup(12000);
 
-		cout << "--------- SETTINGS FILE NOT LOADED, DEFAULTING ---------" << endl;
+		cout << "--------- SETTINGS FILE NOT LOADED, DEFAULTING: SENDER IP: LOCALHOST - 12001 " << endl;
 	}
 	// LOAD SETTINGS -------------- END
 
+	diceProbabilities[0] = 0.0277;
+	diceProbabilities[1] = 0.0554;
+	diceProbabilities[2] = 0.0831;
+	diceProbabilities[3] = 0.1108;
+	diceProbabilities[4] = 0.1385;
+	diceProbabilities[5] = 0.1662;
+	//diceProbabilities[5] = 2.0;
+	diceProbabilities[6] = 0.1385;
+	diceProbabilities[7] = 0.1108;
+	diceProbabilities[8] = 0.0831;
+	diceProbabilities[9] = 0.0554;
+	diceProbabilities[10] = 0.0277;
 
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
@@ -95,13 +108,25 @@ void SceneManager::update(){
 
 		if (clientsFinishedSelecting[0] && clientsFinishedSelecting[1])
 		{
+			//finalProbability =  calculateProbability();
+
 			setState(VIDEO_EXPLAIN);
 			clientsFinishedSelecting[1] = clientsFinishedSelecting[0] = false;
 
+			// SEND CALCULATED PROBABILITY FOR USER SELECTION
+			/*
+			ofxOscMessage mProb;
+			mProb.setAddress("/probability");
+			mProb.addIntArg(finalProbability);
+			netSender.sendMessage(mProb);
+			*/
+
+			// SEND STATE CHANGE
 			ofxOscMessage m;
 			m.setAddress("/goToState");
 			m.addIntArg(VIDEO_EXPLAIN);
 			netSender.sendMessage(m);
+
 		}
 
 	}
@@ -176,7 +201,7 @@ void SceneManager::checkNetMessages(){
 		ofxOscMessage m;
 		netReciever.getNextMessage(&m);
 
-		cout << "RECIEVED MESSAGE WITH ADDRESS: " << m.getAddress() << endl;
+		cout << "MSG RECEIVED -> ADDRESS: " << m.getAddress() << endl;
 
 		// RECIEVE AND BROADCAST -> START GAME
 		if (m.getAddress() == "/start"){
@@ -207,13 +232,6 @@ void SceneManager::checkNetMessages(){
 			int fromClient = m.getArgAsInt32(0);
 			int serverGridColumnCount = SELECTION_COMPASES;
 
-			// UNLOCK 2nd SCREEN
-			if (fromClient == 0){
-				ofxOscMessage unlockScreen;
-				unlockScreen.setAddress("/unlockScreen");
-				netSender.sendMessage(unlockScreen);
-			}
-
 
 			// ADAPT GRIDS FROM CLIENTS (HALF A GRID) TO THE SERVERS COMPLETE GRID OF COMPASES
 			for (int i = 0; i < 8; i++)
@@ -235,6 +253,22 @@ void SceneManager::checkNetMessages(){
 
 				//cout << "Column: " << ofToString(i) << " / Compas: " << ofToString(soundManager.userSelection[i]) << endl;
 			}
+
+			// UNLOCK 2nd SCREEN
+			if (fromClient == 0){
+				ofxOscMessage unlockScreen;
+				unlockScreen.setAddress("/unlockScreen");
+				netSender.sendMessage(unlockScreen);
+			}
+			/*
+			else {
+				ofxOscMessage gridMessage;
+				gridMessage.setAddress("/goToState");
+				gridMessage.addIntArg(VIDEO_EXPLAIN);
+				setState(VIDEO_EXPLAIN);
+				netSender.sendMessage(gridMessage);
+			}
+			*/
 			
 			
 			/*
@@ -294,7 +328,7 @@ void SceneManager::setState(int state){
 		//videos[SCREENSAVER].setFrame(0);
 		//videos[SCREENSAVER].setPaused(true);
 
-		clientsFinishedSelecting[0] = false;
+		clientsFinishedSelecting[0] = true;
 		clientsFinishedSelecting[1] = false;
 		
 	}
@@ -334,6 +368,24 @@ void SceneManager::setState(int state){
 
 }
 
+int SceneManager::calculateProbability(){
+	double prob = 1.0;
+
+	for (int i = 0; i < 16; i++) 
+	{
+		int selectedRowInColumn = floor(soundManager.userSelection[i] / 16.0);
+		prob *= diceProbabilities[selectedRowInColumn];
+		cout << ofToString(i) << ":: Row:" << ofToString(selectedRowInColumn) <<  " - Prob:" << ofToString(prob) << endl;
+	}
+	cout <<":: Prob Final:" << ofToString(prob) << endl;
+
+	//double totalValsEver = 45949729863572161;
+	double totalValsEver = 1045949729863572161;
+	cout <<":: Prob Final int:" << ofToString(int(prob*totalValsEver)) << endl;
+
+	return int(totalValsEver * prob);
+}
+
 
 void SceneManager::mousePressed(int x, int y, int button){
 	
@@ -363,6 +415,11 @@ void SceneManager::keyPressed(int key){
 	if (key == '0'){
 		//soundManager.addToVals(&soundManager.compases[0]);
 		setState(SCREENSAVER);
+
+		ofxOscMessage sendState;
+		sendState.setAddress("/goToState");
+		sendState.addIntArg(SCREENSAVER);
+		netSender.sendMessage(sendState);
 	}
 
 	if (key == '1'){
