@@ -23,6 +23,7 @@ void SceneManager::setup(){
 	}
 	// LOAD SETTINGS -------------- END
 
+	/*
 	diceProbabilities[0] = 0.0277;
 	diceProbabilities[1] = 0.0554;
 	diceProbabilities[2] = 0.0831;
@@ -35,6 +36,7 @@ void SceneManager::setup(){
 	diceProbabilities[8] = 0.0831;
 	diceProbabilities[9] = 0.0554;
 	diceProbabilities[10] = 0.0277;
+	*/
 
 	// SET LAYERS
 	for (int i = 0; i < 4; i++)
@@ -72,8 +74,16 @@ void SceneManager::setup(){
 	videos[VIDEO_EXPLAIN].setPaused(true);
 	videos[EXECUTION].setPaused(true);
 
-	componiendo.loadImage("images/componiendo.png");
-	
+	//componiendo.loadImage("images/componiendo.png");
+
+	diceRollSound.loadSound("audio/diceRoll_0.mp3");
+	diceRollSound2.loadSound("audio/diceRoll_1.mp3");
+
+	for (int i = 0; i < 3; i++){
+		cuerdasFondo[i].loadSound("audio/cuerdas_" + ofToString(i) + ".wav");
+		cuerdasFondo[i].setVolume(0.2);
+	}
+
 
 	soundManager.setup();
 
@@ -105,6 +115,26 @@ void SceneManager::update(){
 		videos[SELECTION].update();
 		videos[SELECTION].draw(0, 0, stateLayers[SELECTION].getWidth(), stateLayers[SELECTION].getHeight());
 		stateLayers[SELECTION].end();
+
+		if(!diceRollSound.getIsPlaying() && !diceRollSound2.getIsPlaying() && ofRandom(1.0) < 0.005){
+			if(ofRandom(1.0) < 0.5){
+				diceRollSound.play();
+			} else {
+				diceRollSound2.play();
+			}
+		}
+
+		if(!cuerdasFondo[0].getIsPlaying() && !cuerdasFondo[1].getIsPlaying() && !cuerdasFondo[2].getIsPlaying()){
+			float randomSelect = ofRandom(1.0);
+			if(randomSelect < 0.33){
+				cuerdasFondo[0].play();
+			} else if(randomSelect < 0.66){
+				cuerdasFondo[1].play();
+			}
+			else {
+				cuerdasFondo[2].play();
+			}
+		}
 
 		if (clientsFinishedSelecting[0] && clientsFinishedSelecting[1])
 		{
@@ -152,7 +182,7 @@ void SceneManager::update(){
 		stateLayers[VIDEO_EXPLAIN].end();
 
 	}
-	
+
 	if (sceneState == EXECUTION || (prevSceneState == EXECUTION && layerTransition.isAnimating())){
 		stateLayers[EXECUTION].begin();
 		ofBackground(0);
@@ -166,16 +196,16 @@ void SceneManager::update(){
 
 		stateLayers[EXECUTION].end();
 	}
-	
 
-	
 
-	
+
+
+
 }
 void SceneManager::render(){
 
 	//ofSetColor(255, 255.0 * (ofGetMouseX() / float(ofGetWindowWidth())));
-	
+
 	/*
 	ofSetColor(255);
 	stateLayers[prevSceneState].draw(0, ofGetWindowHeight() * 0.5, ofGetWindowWidth(), ofGetWindowHeight() * 0.5);
@@ -218,17 +248,17 @@ void SceneManager::checkNetMessages(){
 			cout << "GO TO STATE: " << ofToString(m.getArgAsInt32(0)) << endl;
 			int nextState = m.getArgAsInt32(0);
 			setState(nextState);
-			
+
 			ofxOscMessage reSendState;
 			reSendState.setAddress("/goToState");
 			reSendState.addIntArg(nextState);
 			netSender.sendMessage(reSendState);
 		}
 
-	
+
 		// RECIEVE -> COMPAS SELECTION -> SAVE COMPAS SELECTION TO SoundManager
 		if (m.getAddress() == "/compasSelection"){
-			
+
 			int fromClient = m.getArgAsInt32(0);
 			int serverGridColumnCount = SELECTION_COMPASES;
 
@@ -262,15 +292,15 @@ void SceneManager::checkNetMessages(){
 			}
 			/*
 			else {
-				ofxOscMessage gridMessage;
-				gridMessage.setAddress("/goToState");
-				gridMessage.addIntArg(VIDEO_EXPLAIN);
-				setState(VIDEO_EXPLAIN);
-				netSender.sendMessage(gridMessage);
+			ofxOscMessage gridMessage;
+			gridMessage.setAddress("/goToState");
+			gridMessage.addIntArg(VIDEO_EXPLAIN);
+			setState(VIDEO_EXPLAIN);
+			netSender.sendMessage(gridMessage);
 			}
 			*/
-			
-			
+
+
 			/*
 			// 1D to 2D
 			int totalColumns = SELECTION_COMPASES;
@@ -282,15 +312,15 @@ void SceneManager::checkNetMessages(){
 			// BROADCAST ACTIVE COLUMN
 			ofxOscMessage gridMessage;
 			if (column != 15){
-				// IF NOT FINISHED SELECTING -> NEXT COLUMN
-				gridMessage.setAddress("/activeColumn");
-				gridMessage.addIntArg(column + 1);
+			// IF NOT FINISHED SELECTING -> NEXT COLUMN
+			gridMessage.setAddress("/activeColumn");
+			gridMessage.addIntArg(column + 1);
 			}
 			else {
-				// IF FINISHED SELECTING -> GOT TO STATE 2
-				gridMessage.setAddress("/goToState");
-				gridMessage.addIntArg(VIDEO_EXPLAIN);
-				setState(VIDEO_EXPLAIN);
+			// IF FINISHED SELECTING -> GOT TO STATE 2
+			gridMessage.setAddress("/goToState");
+			gridMessage.addIntArg(VIDEO_EXPLAIN);
+			setState(VIDEO_EXPLAIN);
 			}
 			netSender.sendMessage(gridMessage);
 			*/
@@ -318,7 +348,7 @@ void SceneManager::setState(int state){
 		//videos[EXECUTION].setPaused(true);
 
 		soundManager.isPlayingVals = false;
-		
+
 	}
 
 	else if (sceneState == SELECTION)
@@ -330,7 +360,7 @@ void SceneManager::setState(int state){
 
 		clientsFinishedSelecting[0] = true;
 		clientsFinishedSelecting[1] = false;
-		
+
 	}
 
 	else if (sceneState == VIDEO_EXPLAIN)
@@ -339,13 +369,19 @@ void SceneManager::setState(int state){
 		videos[VIDEO_EXPLAIN].setPaused(false);
 		//videos[SELECTION].setFrame(0);
 		//videos[SELECTION].setPaused(true);
+
+		/*
+		for (int i = 0; i < 3; i++){
+			cuerdasFondo[i].setPaused(true);
+		}
+		*/
 	}
 
 	else if (sceneState == EXECUTION)
 	{
 		videos[EXECUTION].setFrame(0);
 		videos[EXECUTION].play();
-		
+
 		for (int i = 0; i < 16; i++)
 		{
 			cout << " - " << ofToString(soundManager.userSelection[i]);
@@ -353,7 +389,7 @@ void SceneManager::setState(int state){
 		cout << endl;
 
 		soundManager.playVals();
-			
+
 		//videos[VIDEO_EXPLAIN].setFrame(0);
 		//videos[VIDEO_EXPLAIN].setPaused(true);
 	}
@@ -364,7 +400,7 @@ void SceneManager::setState(int state){
 	m.addIntArg(sceneState);
 	netSender.sendMessage(m);
 	*/
-	
+
 
 }
 
@@ -374,7 +410,7 @@ int SceneManager::calculateProbability(){
 	for (int i = 0; i < 16; i++) 
 	{
 		int selectedRowInColumn = floor(soundManager.userSelection[i] / 16.0);
-		prob *= diceProbabilities[selectedRowInColumn];
+		//prob *= diceProbabilities[selectedRowInColumn];
 		cout << ofToString(i) << ":: Row:" << ofToString(selectedRowInColumn) <<  " - Prob:" << ofToString(prob) << endl;
 	}
 	cout <<":: Prob Final:" << ofToString(prob) << endl;
@@ -388,7 +424,7 @@ int SceneManager::calculateProbability(){
 
 
 void SceneManager::mousePressed(int x, int y, int button){
-	
+
 	if (sceneState == SCREENSAVER)
 	{
 		ofRectangle buttonArea = ofRectangle(ofPoint(100, 100), 300, 100);
@@ -444,11 +480,11 @@ void SceneManager::keyPressed(int key){
 
 
 	if (key == 's' || key == 'S'){
-		
+
 		ofxOscMessage m;
 		m.setAddress("/unlockScreen");
 		netSender.sendMessage(m);
-		
+
 	}
 }
 

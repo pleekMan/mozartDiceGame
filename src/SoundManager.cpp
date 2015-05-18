@@ -75,7 +75,7 @@ void SoundManager::loadCompases(){
 	for (int i = 0; i < COMPAS_COUNT; i++){
 
 		string compasLine = audioIndex.getNextLine();
-		string soundPath = "audio/" + compasLine + ".wav";
+		string soundPath = "audio/vals/" + compasLine + ".wav";
 		compases[i].loadSound(soundPath, false);
 		compases[i].setPaused(true);
 		cout << ofToString(i) << " > " << compasLine << endl;

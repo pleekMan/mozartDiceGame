@@ -47,7 +47,7 @@ public:
 	bool clientsFinishedSelecting[2];
 
 	//int finalProbability;
-	float diceProbabilities [11]; // PROBABILITIES FOR EACH DICE PAIR/ROW
+	//float diceProbabilities [11]; // PROBABILITIES FOR EACH DICE PAIR/ROW
 
 	int sceneState;
 	int prevSceneState;
@@ -55,8 +55,12 @@ public:
 
 	ofxAnimatableFloat layerTransition;
 	ofVideoPlayer videos[4];
-	ofImage componiendo;
+	//ofImage componiendo;
 	//ofImage images[4];
+
+	ofSoundPlayer diceRollSound;
+	ofSoundPlayer diceRollSound2;
+	ofSoundPlayer cuerdasFondo[3];
 
 	void setState(int state);
 	void mousePressed(int x, int y, int button);
