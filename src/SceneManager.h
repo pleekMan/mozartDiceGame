@@ -57,6 +57,8 @@ public:
 	ofVideoPlayer videos[4];
 	//ofImage componiendo;
 	//ofImage images[4];
+	ofVideoPlayer noteBursts [4];
+	int fondoNotesCounter;
 
 	ofSoundPlayer diceRollSound;
 	ofSoundPlayer diceRollSound2;

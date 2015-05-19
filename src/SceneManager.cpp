@@ -74,6 +74,14 @@ void SceneManager::setup(){
 	videos[VIDEO_EXPLAIN].setPaused(true);
 	videos[EXECUTION].setPaused(true);
 
+	for (int i = 0; i < 4; i++){
+		noteBursts[i].loadMovie("video/BURSTS_" + ofToString(i) + ".mov");
+		noteBursts[i].setLoopState(OF_LOOP_NONE);
+		noteBursts[i].play();
+		noteBursts[i].setPaused(true);
+	}
+	fondoNotesCounter = 0;
+
 	//componiendo.loadImage("images/componiendo.png");
 
 	diceRollSound.loadSound("audio/diceRoll_0.mp3");
@@ -99,7 +107,9 @@ void SceneManager::update(){
 	layerTransition.update(1.0 / ofGetFrameRate());
 
 	// RENDER ONLY ACTUAL AND PREVIOUS LAYERS (UNTIL TRANSITION IS FINISHED) (NOT STOPPING VIDEO)
+	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 	ofSetColor(255);
+
 
 	if (sceneState == SCREENSAVER || (prevSceneState == SCREENSAVER && layerTransition.isAnimating())){
 		stateLayers[SCREENSAVER].begin();
@@ -189,6 +199,11 @@ void SceneManager::update(){
 
 		videos[EXECUTION].update();
 		videos[EXECUTION].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
+
+		//ofEnableBlendMode(OF_BLENDMODE_ADD);
+		noteBursts[fondoNotesCounter].update();
+		noteBursts[fondoNotesCounter].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
+		//ofDisableBlendMode();
 
 		soundManager.update();
 		soundManager.render();
@@ -342,6 +357,8 @@ void SceneManager::setState(int state){
 
 	if (sceneState == SCREENSAVER)
 	{
+		noteBursts[fondoNotesCounter].setPaused(true);
+
 		videos[SCREENSAVER].setFrame(0);
 		videos[SCREENSAVER].setPaused(false);
 		//videos[EXECUTION].setFrame(0);
@@ -372,7 +389,7 @@ void SceneManager::setState(int state){
 
 		/*
 		for (int i = 0; i < 3; i++){
-			cuerdasFondo[i].setPaused(true);
+		cuerdasFondo[i].setPaused(true);
 		}
 		*/
 	}
@@ -382,13 +399,20 @@ void SceneManager::setState(int state){
 		videos[EXECUTION].setFrame(0);
 		videos[EXECUTION].play();
 
+		/*
 		for (int i = 0; i < 16; i++)
 		{
 			cout << " - " << ofToString(soundManager.userSelection[i]);
 		}
 		cout << endl;
+		*/
 
 		soundManager.playVals();
+
+		fondoNotesCounter = (fondoNotesCounter + 1) % 4;
+		cout << ofToString(fondoNotesCounter) << endl;
+		noteBursts[fondoNotesCounter].setFrame(0);
+		noteBursts[fondoNotesCounter].setPaused(false);
 
 		//videos[VIDEO_EXPLAIN].setFrame(0);
 		//videos[VIDEO_EXPLAIN].setPaused(true);

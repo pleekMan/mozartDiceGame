@@ -5,6 +5,8 @@ void ofApp::setup(){
 	
 	ofSetBackgroundAuto(true);
 	ofBackground(0);
+	ofEnableAlphaBlending();
+	//ofDisableBlendMode();
 	//ofSetFrameRate(10);
 
 	sceneManager.setup();
@@ -21,11 +23,13 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	// DRAW BACKGROUND LINES
+	/*
 	ofSetColor(255,255,0);
 	for (int i = 0; i < ofGetWindowWidth(); i += 40)
 	{
 		ofLine(i, 0, i, ofGetWindowHeight());
 	}
+	*/
 
 	sceneManager.render();
 
