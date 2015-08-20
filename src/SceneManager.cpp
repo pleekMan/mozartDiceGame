@@ -73,13 +73,16 @@ void SceneManager::setup(){
 	videos[SELECTION].setPaused(true);
 	videos[VIDEO_EXPLAIN].setPaused(true);
 	videos[EXECUTION].setPaused(true);
-
+	
+	/*
 	for (int i = 0; i < 4; i++){
+		noteBursts[i].setPixelFormat(OF_PIXELS_RGBA); // WINDOWS NEEDS THIS TO RENDER WITH ALPHA CHANNEL (with PATCHED ofVideoShits cpp an h)
 		noteBursts[i].loadMovie("video/BURSTS_" + ofToString(i) + ".mov");
 		noteBursts[i].setLoopState(OF_LOOP_NONE);
 		noteBursts[i].play();
 		noteBursts[i].setPaused(true);
 	}
+	*/
 	fondoNotesCounter = 0;
 
 	//componiendo.loadImage("images/componiendo.png");
@@ -98,6 +101,9 @@ void SceneManager::setup(){
 	setState(SCREENSAVER);
 	clientsFinishedSelecting[0] = false;
 	clientsFinishedSelecting[1] = true;
+
+	enableRestart = false;
+	showDebugSound = false;
 
 }
 void SceneManager::update(){
@@ -201,13 +207,19 @@ void SceneManager::update(){
 		videos[EXECUTION].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
 
 		//ofEnableBlendMode(OF_BLENDMODE_ADD);
-		noteBursts[fondoNotesCounter].update();
-		noteBursts[fondoNotesCounter].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
+		//noteBursts[fondoNotesCounter].update();
+		//noteBursts[fondoNotesCounter].draw(0, 0, stateLayers[EXECUTION].getWidth(), stateLayers[EXECUTION].getHeight());
 		//ofDisableBlendMode();
 
 		soundManager.update();
-		soundManager.render();
+		if(showDebugSound)soundManager.render();
 
+		if(!soundManager.isPlayingVals && !enableRestart){
+			ofxOscMessage mR;
+			mR.setAddress("/enableRestart");
+			netSender.sendMessage(mR);
+			enableRestart = true;
+		}
 
 		stateLayers[EXECUTION].end();
 	}
@@ -357,7 +369,7 @@ void SceneManager::setState(int state){
 
 	if (sceneState == SCREENSAVER)
 	{
-		noteBursts[fondoNotesCounter].setPaused(true);
+		//noteBursts[fondoNotesCounter].setPaused(true);
 
 		videos[SCREENSAVER].setFrame(0);
 		videos[SCREENSAVER].setPaused(false);
@@ -384,8 +396,16 @@ void SceneManager::setState(int state){
 	{
 		videos[VIDEO_EXPLAIN].setFrame(0);
 		videos[VIDEO_EXPLAIN].setPaused(false);
+
+		diceRollSound.setPaused(true);
+		diceRollSound2.setPaused(true);
+		cuerdasFondo[0].setPaused(true);
+		cuerdasFondo[1].setPaused(true);
+		cuerdasFondo[2].setPaused(true);
+
 		//videos[SELECTION].setFrame(0);
 		//videos[SELECTION].setPaused(true);
+
 
 		/*
 		for (int i = 0; i < 3; i++){
@@ -398,6 +418,7 @@ void SceneManager::setState(int state){
 	{
 		videos[EXECUTION].setFrame(0);
 		videos[EXECUTION].play();
+		
 
 		/*
 		for (int i = 0; i < 16; i++)
@@ -411,8 +432,10 @@ void SceneManager::setState(int state){
 
 		fondoNotesCounter = (fondoNotesCounter + 1) % 4;
 		cout << ofToString(fondoNotesCounter) << endl;
-		noteBursts[fondoNotesCounter].setFrame(0);
-		noteBursts[fondoNotesCounter].setPaused(false);
+		//noteBursts[fondoNotesCounter].setFrame(0);
+		//noteBursts[fondoNotesCounter].setPaused(false);
+
+		enableRestart = false;
 
 		//videos[VIDEO_EXPLAIN].setFrame(0);
 		//videos[VIDEO_EXPLAIN].setPaused(true);
@@ -508,7 +531,10 @@ void SceneManager::keyPressed(int key){
 		ofxOscMessage m;
 		m.setAddress("/unlockScreen");
 		netSender.sendMessage(m);
+	}
 
+	if (key == 'd' || key == 'D'){
+		showDebugSound = !showDebugSound;
 	}
 }
 

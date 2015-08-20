@@ -45,6 +45,8 @@ public:
 	ofxOscSender netSender;
 
 	bool clientsFinishedSelecting[2];
+	bool enableRestart;
+	bool showDebugSound;
 
 	//int finalProbability;
 	//float diceProbabilities [11]; // PROBABILITIES FOR EACH DICE PAIR/ROW
@@ -57,7 +59,7 @@ public:
 	ofVideoPlayer videos[4];
 	//ofImage componiendo;
 	//ofImage images[4];
-	ofVideoPlayer noteBursts [4];
+	//ofVideoPlayer noteBursts [4];
 	int fondoNotesCounter;
 
 	ofSoundPlayer diceRollSound;

@@ -31,7 +31,7 @@ void SoundManager::update(){
 			//cout << " INSIDE VALS" << endl;
 
 			compasesVals[currentValsCompas]->setVolume(envelope.getLevelAt(compasesVals[currentValsCompas]->getPosition()));
-			compasesVals[nextValsCompas]->setVolume(envelope.getLevelAt(compasesVals[nextValsCompas]->getPosition()));
+			if(nextValsCompas < 16)compasesVals[nextValsCompas]->setVolume(envelope.getLevelAt(compasesVals[nextValsCompas]->getPosition()));
 
 			// TRIGGER THE NEXT COMPAS AT CROSSFADE POSITION. UPDATE VARS
 			if ((compasesVals[currentValsCompas]->getPosition() + crossFade) >= 0.99){
@@ -40,7 +40,7 @@ void SoundManager::update(){
 				nextValsCompas = currentValsCompas + 1;
 
 				// IF IN LOOP, AFTER LAST COMPAS, START OVER, ELSE, STOP THE SHIT (OOPS! LAST COMPAS HAS NO ENVELOPE!!!)
-				if (nextValsCompas >= compasesVals.size()){
+				if (nextValsCompas > compasesVals.size()){
 				//if (nextValsCompas >= 5){ // LESS TIME FOR PRESENTATION
 					if (loop){
 						nextValsCompas = 0;
@@ -48,12 +48,10 @@ void SoundManager::update(){
 					else {
 						isPlayingVals = false;
 					}
+				} else {
+					compasesVals[currentValsCompas]->play();
 				}
-
-				compasesVals[currentValsCompas]->play();
-
 			}
-
 		}
 	}
 
@@ -63,6 +61,14 @@ void SoundManager::render(){
 		
 	drawEnvelopes();
 	ofDrawBitmapString("Current: " + ofToString(currentValsCompas) + " / Next: " + ofToString(nextValsCompas), ofPoint(20, 50));
+
+	for (int i = 0; i < SELECTION_COMPASES; i++)
+	{
+		ofNoFill();
+		if(i <= currentValsCompas)ofFill();
+		ofRect(20 + (20 * i),60,20,20);
+	}
+
 
 }
 
@@ -87,8 +93,8 @@ void SoundManager::loadCompases(){
 	// SET UP DEFAULT COMPAS SELECTION (IN CASE NO SELECTION IS TRANSMITTED FROM CLIENTS)
 	for (int i = 0; i < SELECTION_COMPASES; i++)
 	{
-		//addToVals(&compases[int(ofRandom(175))]);
-		addToVals(&compases[175]);
+		addToVals(&compases[int(ofRandom(175))]);
+		//addToVals(&compases[175]);
 
 	}
 }
