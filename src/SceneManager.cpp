@@ -103,7 +103,7 @@ void SceneManager::setup(){
 	clientsFinishedSelecting[1] = true;
 
 	enableRestart = false;
-	showDebugSound = false;
+	showDebugSound = true;
 
 }
 void SceneManager::update(){
@@ -221,6 +221,11 @@ void SceneManager::update(){
 			enableRestart = true;
 		}
 
+		for (int i = 0; i < SELECTION_COMPASES; i++)
+		{
+			ofDrawBitmapString( ofToString(soundManager.userSelection[i]), 20 + (20 * i), 20);
+		}
+
 		stateLayers[EXECUTION].end();
 	}
 
@@ -300,7 +305,9 @@ void SceneManager::checkNetMessages(){
 				{
 					int serverGridSelection = clientGridSelection + (clientRow * (serverGridColumnCount / 2)); // userSelection + (userRow * (serverColumnWidth / 2))
 					soundManager.setCompasSelection(i, serverGridSelection);
+					//cout << "SELECTED COMPAS: " + ofToString(serverGridSelection) << endl;
 					clientsFinishedSelecting[0] = true;
+					
 				}
 				else {
 					int serverGridSelection = clientGridSelection + ((serverGridColumnCount / 2) * (clientRow + 1)); // userSelection + ( (userRow + 1) * (serverColumnWidth / 2))
@@ -308,7 +315,7 @@ void SceneManager::checkNetMessages(){
 					clientsFinishedSelecting[1] = true;
 				}
 
-				//cout << "Column: " << ofToString(i) << " / Compas: " << ofToString(soundManager.userSelection[i]) << endl;
+				cout << "Column: " << ofToString(i) << " / Compas: " << ofToString(soundManager.userSelection[i]) << endl;
 			}
 
 			// UNLOCK 2nd SCREEN

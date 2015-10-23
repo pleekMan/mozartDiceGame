@@ -93,8 +93,9 @@ void SoundManager::loadCompases(){
 	// SET UP DEFAULT COMPAS SELECTION (IN CASE NO SELECTION IS TRANSMITTED FROM CLIENTS)
 	for (int i = 0; i < SELECTION_COMPASES; i++)
 	{
-		addToVals(&compases[int(ofRandom(175))]);
-		//addToVals(&compases[175]);
+		//addToVals(&compases[int(ofRandom(175))]);
+		userSelection[i] = 48 + i;
+		addToVals(&compases[userSelection[i]]);
 
 	}
 }
