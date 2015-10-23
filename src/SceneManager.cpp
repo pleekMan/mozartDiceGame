@@ -100,10 +100,10 @@ void SceneManager::setup(){
 
 	setState(SCREENSAVER);
 	clientsFinishedSelecting[0] = false;
-	clientsFinishedSelecting[1] = true;
+	clientsFinishedSelecting[1] = false;
 
 	enableRestart = false;
-	showDebugSound = true;
+	showDebugSound = false;
 
 }
 void SceneManager::update(){
@@ -221,10 +221,6 @@ void SceneManager::update(){
 			enableRestart = true;
 		}
 
-		for (int i = 0; i < SELECTION_COMPASES; i++)
-		{
-			ofDrawBitmapString( ofToString(soundManager.userSelection[i]), 20 + (20 * i), 20);
-		}
 
 		stateLayers[EXECUTION].end();
 	}
@@ -396,6 +392,9 @@ void SceneManager::setState(int state){
 
 		clientsFinishedSelecting[0] = true;
 		clientsFinishedSelecting[1] = false;
+
+		diceRollSound.setPaused(true);
+		diceRollSound2.setPaused(true);
 
 	}
 

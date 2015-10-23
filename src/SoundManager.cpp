@@ -69,6 +69,12 @@ void SoundManager::render(){
 		ofRect(20 + (20 * i),60,20,20);
 	}
 
+	
+		for (int i = 0; i < SELECTION_COMPASES; i++)
+		{
+			ofDrawBitmapString( ofToString(userSelection[i]), 20 + (30 * i), 20);
+		}
+
 
 }
 
@@ -94,7 +100,7 @@ void SoundManager::loadCompases(){
 	for (int i = 0; i < SELECTION_COMPASES; i++)
 	{
 		//addToVals(&compases[int(ofRandom(175))]);
-		userSelection[i] = 48 + i;
+		userSelection[i] = 16 + i;
 		addToVals(&compases[userSelection[i]]);
 
 	}
@@ -195,6 +201,7 @@ void SoundManager::setCompasSelection(int column, int compas){
 	
 	userSelection[column] = compas;
 
+	// HASTA Q NO SE COMPLETA DE SELECCIONAR EN LAS 2 PANTALLAS, NO SE ACTUALIZAN LOS COMPASES CORRECTOS CON LA userSelection
 	if (column == 15){
 	//if (column == 7){ // PARA TESTEAR LA PRIMER PANTALLA NOMAS
 		compasesVals.clear();
