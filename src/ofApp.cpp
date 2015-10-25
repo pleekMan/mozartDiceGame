@@ -8,7 +8,7 @@ void ofApp::setup(){
 	ofEnableAlphaBlending();
 	//ofDisableBlendMode();
 	//ofSetFrameRate(10);
-
+	ofHideCursor();
 	sceneManager.setup();
 }
 
