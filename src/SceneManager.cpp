@@ -526,12 +526,13 @@ void SceneManager::keyPressed(int key){
 		//soundManager.playVals();
 	}
 
+	/*
 	if (key == 'z' || key == 'Z'){
 		clientsFinishedSelecting[0] = true;
 		clientsFinishedSelecting[1] = true;
 	}
 
-
+	
 	if (key == 's' || key == 'S'){
 
 		ofxOscMessage m;
@@ -542,5 +543,6 @@ void SceneManager::keyPressed(int key){
 	if (key == 'd' || key == 'D'){
 		showDebugSound = !showDebugSound;
 	}
+	*/
 }
 

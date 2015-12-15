@@ -21,4 +21,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 	
 		SceneManager sceneManager;
+		ofxXmlSettings settings;
+		int frameTop, frameBottom, frameLeft, frameRight;
+
 };
